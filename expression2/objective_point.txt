@@ -32,7 +32,7 @@ holoCreate(4,E:toWorld(vec(0,-50,100)),vec(0.1,8,6),E:angles(),vec(255),"cube")
 holoParent(4,E)  
 timer("Update",1000)  
 
-LocalVersion = 1.0 # dont touch
+LocalVersion = 1.1 # dont touch
 }
 interval(100)
 Ang+=3
@@ -69,14 +69,31 @@ if(first()|dupefinished()){
 
 if(httpClk()){
     if(httpSuccess()){
-        local Data = httpData():explode("|")[3,string]
-        MasterVersion = Data:toNumber()
-        if(MasterVersion>LocalVersion){
-            printColor(vec(255,140,0),"Your Objective E2 is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
-            printColor(vec(200),"Download the new version at https://github.com/solomondog50/CDU-Wargame")
+        if(httpRequestUrl()=="https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/version.txt"){
+            local Data = httpData():explode("|")[3,string]
+            MasterVersion = Data:toNumber()
+            
+            if(MasterVersion>LocalVersion){
+                printColor(vec(255,140,0),"Your Objective Point is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
+                printColor(vec(200),"Downloading new version")
+                
+                timer("download",5000)
+            }
+            else{
+                printColor(vec(255),"Objective Point up to date")
+            }
         }
         else{
-            printColor(vec(255),"Objective E2 up to date")
+            local Data = httpData()
+            local File = Data
+            local FileName = "objective_point-"+MasterVersion
+            local FilePath = ">e2shared/CDU/"
+            
+            fileWrite(FilePath+FileName+".txt",File)
+            printColor(vec(200),"File saved: "+FilePath+FileName+".txt")
+            printColor(vec(200),"Uploading latest version to chip")
+            entity():remoteSetCode(Data)
+            
         }
     }
 }
@@ -88,4 +105,12 @@ if(clk("retry")){
     }else{
         printColor(vec(100),"Version check failed")
     }
+}
+if(clk("download")){
+    local URL = "https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/expression2/objective_point.txt"
+    if(httpCanRequest()){
+        httpRequest(URL)
+    }else{
+        printColor(vec(100),"Download failed")
+    }        
 }

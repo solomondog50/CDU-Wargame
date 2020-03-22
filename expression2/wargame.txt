@@ -91,7 +91,7 @@ Team2PointNameSet = 0 #Team Weeb
 
 #---Dont touch below---
 
-LocalVersion = 1.0
+LocalVersion = 1.1
     
 if(first()){
 
@@ -1024,14 +1024,31 @@ if(first()|dupefinished()){
 
 if(httpClk()){
     if(httpSuccess()){
-        local Data = httpData():explode("|")[1,string]
-        MasterVersion = Data:toNumber()
-        if(MasterVersion>LocalVersion){
-            printColor(vec(255,140,0),"Your Wargame E2 is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
-            printColor(vec(200),"Download the new version at https://github.com/solomondog50/CDU-Wargame")
+        if(httpRequestUrl()=="https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/version.txt"){
+            local Data = httpData():explode("|")[1,string]
+            MasterVersion = Data:toNumber()
+            
+            if(MasterVersion>LocalVersion){
+                printColor(vec(255,140,0),"Your Wargame is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
+                printColor(vec(200),"Downloading new version")
+                
+                timer("download",5000)
+            }
+            else{
+                printColor(vec(255),"Wargame up to date")
+            }
         }
         else{
-            printColor(vec(255),"Wargame E2 up to date")
+            local Data = httpData()
+            local File = Data
+            local FileName = "wargame-"+MasterVersion
+            local FilePath = ">e2shared/CDU/"
+            
+            fileWrite(FilePath+FileName+".txt",File)
+            printColor(vec(200),"File saved: "+FilePath+FileName+".txt")
+            printColor(vec(200),"Uploading latest version to chip")
+            entity():remoteSetCode(Data)
+            
         }
     }
 }
@@ -1044,8 +1061,14 @@ if(clk("retry")){
         printColor(vec(100),"Version check failed")
     }
 }
-
-
+if(clk("download")){
+    local URL = "https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/expression2/wargame.txt"
+    if(httpCanRequest()){
+        httpRequest(URL)
+    }else{
+        printColor(vec(100),"Download failed")
+    }        
+}
 
 
 

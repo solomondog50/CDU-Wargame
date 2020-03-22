@@ -2,7 +2,7 @@
 @model models/props_lab/binderblue.mdl
 @persist LocalVersion MasterVersion
 
-if(first()){LocalVersion = 1.0} # dont touch
+if(first()){LocalVersion = 1.1} # dont touch
 
 #Rulebook v1.0 - ChunderDownUndeR
 
@@ -349,14 +349,31 @@ if(first()|dupefinished()){
 
 if(httpClk()){
     if(httpSuccess()){
-        local Data = httpData():explode("|")[2,string]
-        MasterVersion = Data:toNumber()
-        if(MasterVersion>LocalVersion){
-            printColor(vec(255,140,0),"Your Rulebook E2 is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
-            printColor(vec(200),"Download the new version at https://github.com/solomondog50/CDU-Wargame")
+        if(httpRequestUrl()=="https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/version.txt"){
+            local Data = httpData():explode("|")[2,string]
+            MasterVersion = Data:toNumber()
+            
+            if(MasterVersion>LocalVersion){
+                printColor(vec(255,140,0),"Your Rulebook is outdated (Your version: "+LocalVersion+" | Github Version: "+MasterVersion+")")
+                printColor(vec(200),"Downloading new version")
+                
+                timer("download",5000)
+            }
+            else{
+                printColor(vec(255),"Rulebook up to date")
+            }
         }
         else{
-            printColor(vec(255),"Rulebook E2 up to date")
+            local Data = httpData()
+            local File = Data
+            local FileName = "rulebook-"+MasterVersion
+            local FilePath = ">e2shared/CDU/"
+            
+            fileWrite(FilePath+FileName+".txt",File)
+            printColor(vec(200),"File saved: "+FilePath+FileName+".txt")
+            printColor(vec(200),"Uploading latest version to chip")
+            entity():remoteSetCode(Data)
+            
         }
     }
 }
@@ -369,8 +386,14 @@ if(clk("retry")){
         printColor(vec(100),"Version check failed")
     }
 }
-
-
+if(clk("download")){
+    local URL = "https://raw.githubusercontent.com/solomondog50/CDU-Wargame/master/expression2/rulebook.txt"
+    if(httpCanRequest()){
+        httpRequest(URL)
+    }else{
+        printColor(vec(100),"Download failed")
+    }        
+}
 
 
 
