@@ -6,23 +6,29 @@
 @outputs [TeamFlagColor1,TeamFlagColor2]:vector Score Score1 Score2 TimeEclapsed
 @outputs [Player1,Player2,Player3,Player4,Player5,Player6,Player7,Player8]:entity Team1:array Team2:array I T1 T2 Players:array
 @persist Alarm1 Alarm2 Alarm3 Alarm4 Alarm5 Alarm6 Alarm7 Alarm8 S1 S2 S3 S4 S5 S6 S7 S8 Refresh1 Refresh2 Refresh3 Refresh4 Refresh5 Refresh6 Refresh7 Refresh8
-@persist ObjectivePoints:array GameMode Elimination Team1PointNameSet Team2PointNameSet PointContesting Timelimit PlyCount1 PlyCount2
+@persist ObjectivePoints:array GameMode Elimination Team1PointNameSet Team2PointNameSet PointContesting TimeLimit PlyCount1 PlyCount2
 @persist CapRadius CaptureTime FlagColorStrobe TIC1 TIC2 ScoreLimit PointValue [TeamName1 TeamName2]:string GameOver PointsInWeight KillPoint VehicleKillPoint 
 @persist [Weight1,Weight2,Weight3,Weight4,Weight5,Weight6,Weight7,Weight8] [V1,V2,V3,V4,V5,V6,V7,V8]:entity PointCount PointsControlled1 PointsControlled2
-@persist Dead1 Dead2 Dead3 Dead4 Dead5 Dead6 Dead7 Dead8 Refresh
+@persist Dead1 Dead2 Dead3 Dead4 Dead5 Dead6 Dead7 Dead8 Refresh Lock
 @persist LocalVersion MasterVersion
 
 
 
-#Coming next update:
-#Usuful Chat commands for owner to override teams and game settings in realtime
 
-##ACF omni-Team/Gamemode   #Version: BETA  
+##ACF omni-Team/Gamemode   #Version: v1.1.1
 #ChunderDownUndeR / Sol-o-mon
 #Read the rulebook E2 to better undestanding the game setup options for a more customized game
 #Note: there might be errors in the game as its not perfect
 #Note: For best gameplay experience, admin perms is required, or to have prop protection granted on all contestants\
 #make score for player count decrease
+
+#Versions:
+#v1.0
+
+#V1.1.1
+#Added Chat Commands the owner can use to streamline and better improve gameplay and accessability
+#Command can be view on the latest version manual
+#Was going to add a kills to win but cant be stuffed and can be improvised already with game settings
 
 
 if(first()|changed(Refresh)){
@@ -50,7 +56,7 @@ GameMode = 2 #specified below
 
 ScoreLimit = 100000 #The score required to win. set to 0 to disable
 
-Timelimit = 0 #The gametime in minutes set to 0 to disable
+TimeLimit = 0 #The gametime in minutes set to 0 to disable
 
 KillPoint = 1000 #How many points a points a kill grants to the score.
 
@@ -91,7 +97,7 @@ Team2PointNameSet = 0 #Team Weeb
 
 #---Dont touch below---
 
-LocalVersion = 1.1
+LocalVersion = 1.1.1
     
 if(first()){
 
@@ -145,7 +151,7 @@ PointCount = ObjectivePoints:count()
 timer("SetPoints",3000)
 
 CaptureTime=(60/CaptureTime)/60
-Timelimit=Timelimit*60
+TimeLimit=TimeLimit*60
 if(GameMode==1){String="GameMode: Destruction - Earn points for each kill your team gains"}
 elseif(GameMode==2){String="GameMode: King Of The Hill - Hold points and kill enemy team to gain points"}
 elseif(GameMode==3){String="GameMode: Domination - The team to cap all of the points win the game"}
@@ -910,8 +916,8 @@ for(P=1,Players:count()){Players[P,entity]:vehicle():printDriver(TeamName2+" Win
 
 TimeEclapsed++
 
-if(Timelimit){
-Time=Timelimit-TimeEclapsed
+if(TimeLimit){
+Time=TimeLimit-TimeEclapsed
 }else{
 Time=TimeEclapsed
 }
@@ -926,7 +932,7 @@ EGP1:egpSetText(30,"Time: " +Timer)
 EGP2:egpSetText(100,"Time: " +Timer)
 
 }
-if(Timelimit&(TimeEclapsed>Timelimit)){
+if(TimeLimit&(TimeEclapsed>TimeLimit)){
     TimeEclapsed=0
     if((GameMode==1)|(GameMode==2)){
     if(Score1>(Score2*1.5)&(Score1>(ScoreLimit/2))){
@@ -1004,9 +1010,85 @@ for(Q=1,Players:count()){Players[Q,entity]:vehicle():printDriver(TeamName1+" Win
 if(dupefinished()){reset()}
 if(~Reset&Reset){Refresh++}
 
+
 if(chatClk(owner())){
-if(owner():lastSaid()=="!reset") {Refresh++}   
+if(owner():lastSaid()=="/reset") {Refresh++}   
+elseif(owner():lastSaid()=="/lock") {Lock=!Lock}  
+elseif(owner():lastSaid()=="/unlock") {Lock=0}  
+elseif(owner():lastSaid():explode(" ")[1,string]=="/kick"){TarPly = findPlayerByName(owner():lastSaid():explode(" ")[2,string])
+if(TarPly==Player1){Player1=noentity(),EGP1:egpRemove(11),EGP1:egpRemove(101),PlyCount1--,PName11="Player 1 /"+TeamName1}
+elseif(TarPly==Player2){Player2=noentity(),EGP1:egpRemove(12),EGP1:egpRemove(102),PlyCount1--,PName12="Player 2 /"+TeamName1}
+elseif(TarPly==Player3){Player3=noentity(),EGP1:egpRemove(13),EGP1:egpRemove(103),PlyCount1--,PName13="Player 3 /"+TeamName1}
+elseif(TarPly==Player4){Player4=noentity(),EGP1:egpRemove(14),EGP1:egpRemove(104),PlyCount1--,PName14="Player 4 /"+TeamName1}
+elseif(TarPly==Player5){Player5=noentity(),EGP2:egpRemove(15),EGP2:egpRemove(105),PlyCount2--,PName21="Player 1 /"+TeamName2}
+elseif(TarPly==Player6){Player6=noentity(),EGP2:egpRemove(16),EGP2:egpRemove(106),PlyCount2--,PName22="Player 2 /"+TeamName2}
+elseif(TarPly==Player7){Player7=noentity(),EGP2:egpRemove(17),EGP2:egpRemove(107),PlyCount2--,PName23="Player 3 /"+TeamName2}
+elseif(TarPly==Player8){Player8=noentity(),EGP2:egpRemove(18),EGP2:egpRemove(108),PlyCount2--,PName24="Player 4 /"+TeamName2}
+
 }
+elseif(owner():lastSaid():explode(" ")[1,string]=="/add1"){TarPly = findPlayerByName(owner():lastSaid():explode(" ")[2,string])
+    if(!(TarPly==Player1)){
+    if(!(TarPly==Player2)){
+    if(!(TarPly==Player3)){
+    if(!(TarPly==Player4)){ 
+    if(!(TarPly==Player5)){
+    if(!(TarPly==Player6)){
+    if(!(TarPly==Player7)){
+    if(!(TarPly==Player8)){  
+        if(!Player1:isValid()){Player1=TarPly,PName11=Player1:name()}       
+        elseif(!Player2:isValid()){Player2=TarPly,PName12=Player2:name()}   
+        elseif(!Player3:isValid()){Player3=TarPly,PName13=Player3:name()}  
+        elseif(!Player4:isValid()){Player4=TarPly,PName14=Player4:name()}   
+        Team1=array(Player1,Player2,Player3,Player4) 
+        PlyCount1 = max(Team1:count(),1)
+        Players=  Team1:add(Team2)
+                runOnKeys(Players,1)  
+}}}}}}}}
+}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/add2"){TarPly = findPlayerByName(owner():lastSaid():explode(" ")[2,string])
+    if(!(TarPly==Player5)){
+    if(!(TarPly==Player6)){
+    if(!(TarPly==Player7)){
+    if(!(TarPly==Player8)){ 
+    if(!(TarPly==Player1)){
+    if(!(TarPly==Player2)){
+    if(!(TarPly==Player3)){
+    if(!(TarPly==Player4)){ 
+        if(!Player5:isValid()){Player5=TarPly,PName21=Player5:name()}       
+        elseif(!Player6:isValid()){Player6=TarPly,PName22=Player6:name()}   
+        elseif(!Player7:isValid()){Player7=TarPly,PName23=Player7:name()}  
+        elseif(!Player8:isValid()){Player8=TarPly,PName24=Player8:name()} 
+                Team2=array(Player5,Player6,Player7,Player8)  
+                PlyCount2 = max(Team2:count(),1)
+        Players=  Team1:add(Team2)
+                runOnKeys(Players,1)     
+}}}}}}}}
+}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/GameMode"){GameMode = owner():lastSaid():explode(" ")[2,string]:toNumber()
+if(GameMode==1){String="GameMode: Destruction - Earn points for each kill your team gains"}
+elseif(GameMode==2){String="GameMode: King Of The Hill - Hold points and kill enemy team to gain points"}
+elseif(GameMode==3){String="GameMode: Domination - The team to cap all of the points win the game"}
+else{String="GameMode: Non"}
+}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/TimeLimit"){TimeLimit = owner():lastSaid():explode(" ")[2,string]:toNumber()
+TimeLimit=TimeLimit*60
+}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/CaptureTime"){CaptureTime = owner():lastSaid():explode(" ")[2,string]:toNumber()
+CaptureTime=(60/CaptureTime)/60
+}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/Elimination"){Elimination = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/KillPoint"){KillPoint = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/PointsInWeight"){PointsInWeight = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/VehicleKillPoint"){VehicleKillPoint = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/ScoreLimit"){ScoreLimit = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/PointValue"){PointValue = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/TeamName1"){TeamName1 = owner():lastSaid():explode(" ")[2,string]}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/TeamName2"){TeamName2 = owner():lastSaid():explode(" ")[2,string]}
+elseif(owner():lastSaid():explode(" ")[1,string]=="/PointContesting"){PointContesting = owner():lastSaid():explode(" ")[2,string]:toNumber()}
+
+}
+
+
 
 
 

@@ -2,9 +2,9 @@
 @model models/props_lab/binderblue.mdl
 @persist LocalVersion MasterVersion
 
-if(first()){LocalVersion = 1.1} # dont touch
+if(first()){LocalVersion = 1.1.1} # dont touch
 
-#Rulebook v1.0 - ChunderDownUndeR
+#Rulebook v1.1 - ChunderDownUndeR
 
 #Link to download the Dupe and E2s to CDU ACF Wargame!:
 #https://drive.google.com/open?id=1NdLpuMV1qQAx7x1_xmRWNplj0ue5lrdn
@@ -15,7 +15,7 @@ if(first()){LocalVersion = 1.1} # dont touch
 #Contents of this guide
 #-------------------------------------------------------------------------------------------------------------------- 
 
-#Lines:
+#Lines : 
 #12 - contents
 #33 - overview
 #49 - General Game Options
@@ -29,7 +29,8 @@ if(first()){LocalVersion = 1.1} # dont touch
 #261 - Game cirteria (winning losing draw)
 #278 - Resting the Game
 #294 - respawning
-#308 - tips to improve gameplay
+#333 - Owner Chat commands
+#351 - tips to improve gameplay
 #326 - Q&A (WIP)
 
 #--------------------------------------------------------------------------------------------------------------------
@@ -305,6 +306,27 @@ And making a tanks speed, and a players cunning vital to the games outcome unlik
 #elimination (just the game setting)
 #tempory elimination until one set of team dies (dont tick elimination setting for this one)
 #a dedicated respawn area on the map where the other team is prohibeted from entering (eg:safezones)
+
+
+#--------------------------------------------------------------------------------------------------------------------
+#Owner Chat commands
+#--------------------------------------------------------------------------------------------------------------------
+#Chat commands have been added in v1.11 and up to better improve gameplay and setup
+
+#Commands start with a / - not a ! eg: '/Kick ChunderDownUndeR'
+
+#List of commands that the owner of the wargame can use
+
+#/Lock - Toggles Lock for player joining via the ranger walkthrough
+#/Unlock - Just defaultly unlocks the action done above.
+#/Kick 'player name' - Kicks a player from the game
+#/add1 'player name' - remotely adds a player without them needing to walk through ranger onto team1 if they arnt already on a team
+#/add2 'player name' - remotely adds a player without them needing to walk through ranger onto team2 if they arnt already on a team
+#NOTE: player still needs to link to EGP and this cant be done remotely
+#/reset - resets the score and cap points without losing the players or reseting the E2
+#/GameMode 'number' - Changes the primary gamemode
+#/'Game setting variable name' 'input' - overrides a game setting command
+#eg: '/TimeLimit 10', '/Elimination 0'
 
 
 #--------------------------------------------------------------------------------------------------------------------
