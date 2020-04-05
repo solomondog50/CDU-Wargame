@@ -2,7 +2,7 @@
 @model models/props_lab/binderblue.mdl
 @persist LocalVersion MasterVersion
 
-if(first()){LocalVersion = 1.1.1} # dont touch
+if(first()){LocalVersion = 1.2} # dont touch
 
 #Rulebook v1.1 - ChunderDownUndeR
 

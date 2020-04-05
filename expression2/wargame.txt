@@ -97,7 +97,7 @@ Team2PointNameSet = 0 #Team Weeb
 
 #---Dont touch below---
 
-LocalVersion = 1.1.1
+LocalVersion = 1.2
     
 if(first()){
 
